@@ -1,0 +1,11 @@
+{
+  "name": "Bildkalender",
+  "short_name": "Bildkalender",
+  "description": "Gemeinsame Erinnerungen im Jahreslauf",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f6f3",
+  "theme_color": "#366b5c",
+  "lang": "de",
+  "icons": []
+}
