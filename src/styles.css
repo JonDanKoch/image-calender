@@ -316,10 +316,12 @@ body {
 .day-cell img {
     position: absolute;
     bottom: 8px;
-    left: 11px;
-    width: calc(100% - 22px);
-    height: 56px;
-    object-fit: cover;
+    left: 50%;
+    width: auto;
+    height: auto;
+    max-width: calc(100% - 22px);
+    max-height: 56px;
+    transform: translateX(-50%);
     border-radius: 7px;
     filter: saturate(.82)
 }
@@ -442,9 +444,9 @@ footer {
 }
 
 .hero-image {
+    display: block;
     width: 100%;
-    height: 285px;
-    object-fit: cover
+    height: auto
 }
 
 .close-button {
@@ -723,10 +725,9 @@ footer {
     }
 
     .day-cell img {
-        left: 6px;
         bottom: 6px;
-        width: calc(100% - 12px);
-        height: 33px;
+        max-width: calc(100% - 12px);
+        max-height: 33px;
         border-radius: 4px
     }
 
@@ -777,10 +778,6 @@ footer {
 
     footer span:last-child {
         text-align: right
-    }
-
-    .hero-image {
-        height: 220px
     }
 
     .modal-body {
