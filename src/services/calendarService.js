@@ -11,6 +11,37 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { db, storage } from '../firebase'
 import { getDateKey } from '../utils/calendar'
 
+function createUploadId() {
+  const browserCrypto = globalThis.crypto
+
+  if (typeof browserCrypto?.randomUUID === 'function') {
+    return browserCrypto.randomUUID()
+  }
+
+  if (typeof browserCrypto?.getRandomValues === 'function') {
+    const randomValues = new Uint32Array(4)
+    browserCrypto.getRandomValues(randomValues)
+    return Array.from(randomValues, (value) => value.toString(16)).join('-')
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+function getImageContentType(file) {
+  if (file.type) return file.type.toLowerCase()
+
+  const extension = file.name.split('.').pop()?.toLowerCase()
+  const contentTypes = {
+    heic: 'image/heic',
+    heif: 'image/heif',
+    jpeg: 'image/jpeg',
+    jpg: 'image/jpeg',
+    png: 'image/png',
+  }
+
+  return contentTypes[extension] || 'application/octet-stream'
+}
+
 function mapEntries(snapshot) {
   const entries = {}
 
@@ -59,10 +90,12 @@ export async function createCalendarEntry({
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
   const imageReference = ref(
     storage,
-    `calendar/${key}/${crypto.randomUUID()}-${safeName}`,
+    `calendar/${key}/${createUploadId()}-${safeName}`,
   )
 
-  await uploadBytes(imageReference, file)
+  await uploadBytes(imageReference, file, {
+    contentType: getImageContentType(file),
+  })
   const imageUrl = await getDownloadURL(imageReference)
   const trimmedText = text.trim()
 

@@ -47,7 +47,7 @@ export default function UploadModal({ date, onClose, onSubmit }) {
             Bild
             <input
               type="file"
-              accept="image/jpeg,image/png"
+              accept="image/jpeg,image/png,image/heic,image/heif,.jpg,.jpeg,.png,.heic,.heif"
               onChange={(event) => setFile(event.target.files?.[0] || null)}
               required
             />
