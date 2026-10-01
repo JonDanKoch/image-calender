@@ -523,10 +523,25 @@ footer {
 
 .upload-modal {
     width: min(500px, 100%);
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
     background: var(--paper);
     border-radius: 18px;
     position: relative;
     box-shadow: 0 20px 70px #1c2a2440
+}
+
+.edit-image-preview {
+    display: block;
+    width: 100%;
+    max-height: 190px;
+    object-fit: cover;
+    border-radius: 10px
+}
+
+.optional-label {
+    color: var(--muted);
+    font-weight: 400
 }
 
 .upload-body {
@@ -786,5 +801,45 @@ footer {
 
     .modal-body h2 {
         font-size: 26px
+    }
+
+    .modal-backdrop {
+        align-items: end;
+        padding: 0
+    }
+
+    .upload-modal,
+    .detail-modal {
+        width: 100%;
+        max-height: calc(100dvh - 16px);
+        border-radius: 18px 18px 0 0;
+        overflow-y: auto
+    }
+
+    .upload-body {
+        padding: 25px 20px max(24px, env(safe-area-inset-bottom));
+        gap: 15px
+    }
+
+    .edit-image-preview {
+        max-height: 150px
+    }
+
+    .upload-body textarea,
+    .upload-body input[type=file] {
+        font-size: 16px
+    }
+
+    .upload-body textarea {
+        min-height: 130px
+    }
+
+    .upload-body input[type=file],
+    .submit-upload {
+        min-height: 46px
+    }
+
+    .submit-upload {
+        font-size: 14px
     }
 }

@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
-import { CloudSun, ImagePlus, Sparkles, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import Calendar from './components/Calendar'
+import EditEntryModal from './components/EditEntryModal'
 import EntryDetailModal from './components/EntryDetailModal'
 import Header from './components/Header'
 import UploadModal from './components/UploadModal'
 import { useAuth } from './hooks/useAuth'
 import { useCalendarEntries } from './hooks/useCalendarEntries'
-import { createCalendarEntry } from './services/calendarService'
+import {
+  createCalendarEntry,
+  updateCalendarEntry,
+} from './services/calendarService'
 import { getUserDisplayName } from './utils/user'
 
 export default function App() {
   const [selectedEntry, setSelectedEntry] = useState(null)
+  const [editingEntry, setEditingEntry] = useState(null)
   const [uploadDate, setUploadDate] = useState(null)
   const [message, setMessage] = useState('')
   const { user, profile, login, logout } = useAuth(setMessage)
@@ -47,6 +52,26 @@ export default function App() {
     }
   }
 
+  const editEntry = async ({ key, file, text }) => {
+    try {
+      await updateCalendarEntry({ key, file, text })
+      setEditingEntry(null)
+      setMessage('Eintrag wurde erfolgreich aktualisiert.')
+    } catch (error) {
+      console.error('Bearbeitung fehlgeschlagen:', error)
+      setMessage('Der Eintrag konnte nicht aktualisiert werden.')
+    }
+  }
+
+  const openEditor = () => {
+    setEditingEntry(selectedEntry)
+    setSelectedEntry(null)
+  }
+
+  const canEditSelectedEntry = isUploader && (
+    selectedEntry?.ownerId === user?.uid || user?.email === 'demo@example.com'
+  )
+
   return (
     <div className="app-shell">
       <Header
@@ -57,7 +82,6 @@ export default function App() {
       />
 
       <main id="top" className="main-content">
-
         <Calendar
           entries={entries}
           isUploader={isUploader}
@@ -66,13 +90,18 @@ export default function App() {
           onMessage={setMessage}
         />
       </main>
+
       <EntryDetailModal
         entry={selectedEntry}
-        isUploader={isUploader}
+        isUploader={canEditSelectedEntry}
         onClose={() => setSelectedEntry(null)}
-        onEdit={() => setMessage(
-          'Bearbeitung ist bereit für deinen Firebase-Eintrag.',
-        )}
+        onEdit={openEditor}
+      />
+      <EditEntryModal
+        key={editingEntry?.key}
+        entry={editingEntry}
+        onClose={() => setEditingEntry(null)}
+        onSubmit={editEntry}
       />
       <UploadModal
         date={uploadDate}

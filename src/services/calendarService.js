@@ -110,3 +110,32 @@ export async function createCalendarEntry({
     updatedAt: serverTimestamp(),
   })
 }
+
+export async function updateCalendarEntry({ key, file, text }) {
+  if (!db || !storage) {
+    throw new Error('Firebase ist nicht konfiguriert.')
+  }
+
+  const trimmedText = text.trim()
+  const changes = {
+    text: trimmedText,
+    title: trimmedText,
+    updatedAt: serverTimestamp(),
+  }
+
+  if (file) {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+    const imageReference = ref(
+      storage,
+      `calendar/${key}/${createUploadId()}-${safeName}`,
+    )
+
+    await uploadBytes(imageReference, file, {
+      contentType: getImageContentType(file),
+    })
+    const imageUrl = await getDownloadURL(imageReference)
+    changes.images = [imageUrl]
+  }
+
+  await setDoc(doc(db, 'calendarEntries', key), changes, { merge: true })
+}
